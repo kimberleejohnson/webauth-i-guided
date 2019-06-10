@@ -1,6 +1,8 @@
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
+// 1. Require bcrypt, after installing
+const bcrypt = require('bcryptjs'); 
 
 const db = require('./database/dbConfig.js');
 const Users = require('./users/users-model.js');
@@ -17,6 +19,12 @@ server.get('/', (req, res) => {
 
 server.post('/api/register', (req, res) => {
   let user = req.body;
+
+  // 2. Hash the password 
+  const hash = bcrypt.hashSync(user.password, 8); // password gets re-hashed 2 ^ 8 times 
+
+  // 3. Set password equal to hash
+  user.password = hash; 
 
   Users.add(user)
     .then(saved => {
